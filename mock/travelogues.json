@@ -1,0 +1,58 @@
+[
+  {
+    "id": "1",
+    "title": "北京三日游",
+    "content": "这是一篇关于北京三日游的游记，包含了故宫、长城等著名景点的游览体验。",
+    "authorId": "user1",
+    "authorName": "张三",
+    "createdAt": "2023-10-01T08:00:00.000Z",
+    "updatedAt": "2023-10-01T08:00:00.000Z",
+    "status": "pending",
+    "isDeleted": false
+  },
+  {
+    "id": "2",
+    "title": "上海周末游",
+    "content": "这是一篇关于上海周末游的游记，记录了外滩、豫园等地的游览经历。",
+    "authorId": "user2",
+    "authorName": "李四",
+    "createdAt": "2023-10-05T10:00:00.000Z",
+    "updatedAt": "2023-10-05T10:00:00.000Z",
+    "status": "approved",
+    "isDeleted": false
+  },
+  {
+    "id": "3",
+    "title": "成都美食之旅",
+    "content": "这是一篇关于成都美食之旅的游记，详细介绍了火锅、小吃等特色美食。",
+    "authorId": "user3",
+    "authorName": "王五",
+    "createdAt": "2023-10-10T14:00:00.000Z",
+    "updatedAt": "2023-10-10T14:00:00.000Z",
+    "status": "rejected",
+    "rejectionReason": "内容过于简单，缺乏详细描述",
+    "isDeleted": false
+  },
+  {
+    "id": "4",
+    "title": "杭州西湖游览",
+    "content": "这是一篇关于杭州西湖游览的游记，记录了西湖十景的美丽风光。",
+    "authorId": "user4",
+    "authorName": "赵六",
+    "createdAt": "2023-10-15T09:00:00.000Z",
+    "updatedAt": "2023-10-15T09:00:00.000Z",
+    "status": "pending",
+    "isDeleted": false
+  },
+  {
+    "id": "5",
+    "title": "广州一日游",
+    "content": "这是一篇关于广州一日游的游记，介绍了广州塔、沙面等景点。",
+    "authorId": "user5",
+    "authorName": "钱七",
+    "createdAt": "2023-10-20T11:00:00.000Z",
+    "updatedAt": "2023-10-20T11:00:00.000Z",
+    "status": "approved",
+    "isDeleted": true
+  }
+]
