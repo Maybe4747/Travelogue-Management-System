@@ -116,7 +116,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           <div className="flex items-center">
             <span className="mr-3">
               {user.role === UserRole.ADMIN ? '管理员' : '审核人员'}:{' '}
-              {user.username}
+              {user.nickname}
             </span>
             <Dropdown menu={{ items: dropdownItems }} placement="bottomRight">
               <Avatar icon={<UserOutlined />} className="cursor-pointer" />

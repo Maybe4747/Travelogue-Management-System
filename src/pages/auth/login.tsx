@@ -11,10 +11,10 @@ const LoginForm: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const onFinish = async (values: { username: string; password: string }) => {
+  const onFinish = async (values: { nickname: string; password: string }) => {
     setLoading(true);
     try {
-      const success = await login(values.username, values.password);
+      const success = await login(values.nickname, values.password);
       if (success) {
         message.success('登录成功');
         navigate('/');

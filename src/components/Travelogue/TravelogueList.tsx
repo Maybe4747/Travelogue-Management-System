@@ -9,12 +9,12 @@ import {
   CloseOutlined,
 } from '@ant-design/icons';
 import { useAuth } from '../../context/AuthContext';
-import {
-  approveTravelogueApi,
-  rejectTravelogueApi,
-  deleteTravelogueApi,
-} from '../../services/api';
 import { UserRole } from '../../types';
+import {
+  approveTravelogue,
+  rejectTravelogue,
+  deleteTravelogue,
+} from '../../services/travelogueService';
 
 const { TextArea } = Input;
 
@@ -40,14 +40,11 @@ const TravelogueList: React.FC<TravelogueListProps> = ({
   const handleApprove = async (id: string) => {
     setLoading(true);
     try {
-      const success = await approveTravelogueApi(id);
-      if (success) {
-        message.success('游记已通过审核');
-        onStatusChange();
-      } else {
-        message.error('操作失败，请稍后重试');
-      }
+      await approveTravelogue(id);
+      message.success('游记已通过审核');
+      onStatusChange();
     } catch (error) {
+      console.error('操作失败', error);
       message.error('操作失败，请稍后重试');
     } finally {
       setLoading(false);
@@ -70,18 +67,12 @@ const TravelogueList: React.FC<TravelogueListProps> = ({
 
     setLoading(true);
     try {
-      const success = await rejectTravelogueApi(
-        selectedTravelogueId,
-        rejectionReason
-      );
-      if (success) {
-        message.success('已拒绝该游记');
-        setRejectModalVisible(false);
-        onStatusChange();
-      } else {
-        message.error('操作失败，请稍后重试');
-      }
+      await rejectTravelogue(selectedTravelogueId, rejectionReason);
+      message.success('已拒绝该游记');
+      setRejectModalVisible(false);
+      onStatusChange();
     } catch (error) {
+      console.error('操作失败', error);
       message.error('操作失败，请稍后重试');
     } finally {
       setLoading(false);
@@ -97,14 +88,11 @@ const TravelogueList: React.FC<TravelogueListProps> = ({
       onOk: async () => {
         setLoading(true);
         try {
-          const success = await deleteTravelogueApi(id);
-          if (success) {
-            message.success('游记已删除');
-            onStatusChange();
-          } else {
-            message.error('删除失败，请稍后重试');
-          }
+          await deleteTravelogue(id);
+          message.success('游记已删除');
+          onStatusChange();
         } catch (error) {
+          console.error('删除失败', error);
           message.error('删除失败，请稍后重试');
         } finally {
           setLoading(false);
@@ -135,13 +123,13 @@ const TravelogueList: React.FC<TravelogueListProps> = ({
     },
     {
       title: '作者',
-      dataIndex: 'authorName',
-      key: 'authorName',
+      dataIndex: 'user_id',
+      key: 'user_id',
     },
     {
       title: '创建时间',
-      dataIndex: 'createdAt',
-      key: 'createdAt',
+      dataIndex: 'created_at',
+      key: 'created_at',
       render: (text: string) => new Date(text).toLocaleString('zh-CN'),
     },
     {
@@ -195,39 +183,21 @@ const TravelogueList: React.FC<TravelogueListProps> = ({
     <>
       <Table
         rowKey="id"
-        dataSource={travelogues}
         columns={columns}
+        dataSource={travelogues}
         pagination={{ pageSize: 10 }}
-        expandable={{
-          expandedRowRender: (record) => (
-            <div className="p-4">
-              <p className="whitespace-pre-line">{record.content}</p>
-              {record.status === TravelogueStatus.REJECTED &&
-                record.rejectionReason && (
-                  <div className="mt-4">
-                    <Tag color="red">拒绝原因</Tag>
-                    <p className="mt-1">{record.rejectionReason}</p>
-                  </div>
-                )}
-            </div>
-          ),
-        }}
       />
-
       <Modal
-        title="拒绝游记"
+        title="拒绝原因"
         open={rejectModalVisible}
-        onCancel={() => setRejectModalVisible(false)}
         onOk={handleReject}
-        okText="提交"
-        cancelText="取消"
+        onCancel={() => setRejectModalVisible(false)}
         confirmLoading={loading}>
-        <div className="mb-2">请填写拒绝原因：</div>
         <TextArea
           rows={4}
           value={rejectionReason}
           onChange={(e) => setRejectionReason(e.target.value)}
-          placeholder="请详细说明拒绝原因，以便用户理解并改进"
+          placeholder="请输入拒绝原因"
         />
       </Modal>
     </>

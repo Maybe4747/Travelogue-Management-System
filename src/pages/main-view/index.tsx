@@ -5,7 +5,7 @@ import type { RadioChangeEvent } from 'antd';
 import { useLocation } from 'react-router';
 import MainLayout from '../../components/Layout/MainLayout';
 import TravelogueList from '../../components/Travelogue/TravelogueList';
-import { getTraveloguesApi } from '../../services/api';
+import { getTravelogues } from '../../services/travelogueService';
 import type { Travelogue, TravelogueStatusType } from '../../types';
 import { TravelogueStatus } from '../../types';
 
@@ -38,8 +38,9 @@ const MainView: React.FC = () => {
   const fetchTravelogues = async () => {
     setLoading(true);
     try {
-      const data = await getTraveloguesApi(selectedStatus);
+      const data = await getTravelogues(selectedStatus);
       setTravelogues(data);
+      console.log('游记列表', data);
     } catch (error) {
       console.error('获取游记列表失败', error);
     } finally {

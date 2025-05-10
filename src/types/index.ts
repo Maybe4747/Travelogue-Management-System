@@ -2,6 +2,7 @@
 export const UserRole = {
   REVIEWER: 'reviewer', // 审核人员
   ADMIN: 'admin', // 管理员
+  USER: 'user', // 用户
 } as const;
 
 export type UserRoleType = (typeof UserRole)[keyof typeof UserRole];
@@ -9,7 +10,7 @@ export type UserRoleType = (typeof UserRole)[keyof typeof UserRole];
 // 用户信息接口
 export interface User {
   id: string;
-  username: string;
+  nickname: string;
   password: string;
   role: UserRoleType;
 }
@@ -29,11 +30,10 @@ export interface Travelogue {
   id: string;
   title: string;
   content: string;
-  authorId: string;
-  authorName: string;
-  createdAt: string;
-  updatedAt: string;
+  user_id: string;
+  created_at: string;
+  updated_at: string;
   status: TravelogueStatusType;
-  rejectionReason?: string; // 拒绝原因，仅当状态为REJECTED时存在
-  isDeleted: boolean; // 是否被逻辑删除
+  rejection_reason?: string; // 拒绝原因，仅当状态为REJECTED时存在
+  is_deleted: boolean; // 是否被逻辑删除
 }

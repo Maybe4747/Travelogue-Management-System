@@ -31,20 +31,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     if (storedUser) {
       try {
         setUser(JSON.parse(storedUser));
-      } catch (e) {
-        console.error('Failed to parse stored user data');
+      } catch (error) {
+        console.error('Failed to parse stored user data', error);
       }
     }
     setIsLoading(false);
   }, []);
 
-  const login = async (
-    username: string,
-    password: string
-  ): Promise<boolean> => {
+  const login = async (nickname: string, password: string): Promise<boolean> => {
     setIsLoading(true);
     try {
-      const user = await loginApi(username, password);
+      const user = await loginApi(nickname, password);
       if (user) {
         setUser(user);
         localStorage.setItem('user', JSON.stringify(user));
