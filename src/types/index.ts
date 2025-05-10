@@ -8,11 +8,25 @@ export const UserRole = {
 export type UserRoleType = (typeof UserRole)[keyof typeof UserRole];
 
 // 用户信息接口
+export interface UserInfo {
+  avatar: string;
+  nickname: string;
+  gender: string;
+  birthday: string;
+  city: string;
+  signature: string;
+  follow: string[];
+  fans: string[];
+  notes: string[];
+}
+
 export interface User {
   id: string;
-  nickname: string;
-  password: string;
+  name: string;
+  user_info: UserInfo;
   role: UserRoleType;
+  created_at: string;
+  updated_at: string;
 }
 
 // 评论接口
@@ -21,6 +35,7 @@ export interface Comment {
   user_id: string;
   content: string;
   created_at: string;
+  updated_at: string;
 }
 
 // 游记状态常量

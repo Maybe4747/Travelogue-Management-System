@@ -1,6 +1,7 @@
 import axios from './axios';
 import type { Travelogue, TravelogueStatusType } from '../types';
 
+
 // 获取游记列表
 export const getTravelogues = async (
   status?: TravelogueStatusType

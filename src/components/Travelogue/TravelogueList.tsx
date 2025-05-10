@@ -20,6 +20,7 @@ import {
   CloseOutlined,
   CommentOutlined,
   PlayCircleOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
 import { useAuth } from '../../context/AuthContext';
 import { UserRole } from '../../types';
@@ -28,6 +29,7 @@ import {
   rejectTravelogue,
   deleteTravelogue,
 } from '../../services/travelogueService';
+import UserInfoModal from '../User/UserInfoModal';
 
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -52,6 +54,9 @@ const TravelogueList: React.FC<TravelogueListProps> = ({
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [videoModalVisible, setVideoModalVisible] = useState(false);
   const [currentVideo, setCurrentVideo] = useState<string>('');
+  const [userInfoModalVisible, setUserInfoModalVisible] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<string>('');
+
 
   const isAdmin = user?.role === UserRole.ADMIN;
 
@@ -129,6 +134,11 @@ const TravelogueList: React.FC<TravelogueListProps> = ({
     setVideoModalVisible(true);
   };
 
+  const showUserInfo = (userId: string) => {
+    setSelectedUserId(userId);
+    setUserInfoModalVisible(true);
+  };
+
   const getStatusTag = (status: TravelogueStatusType) => {
     switch (status) {
       case TravelogueStatus.PENDING:
@@ -152,7 +162,12 @@ const TravelogueList: React.FC<TravelogueListProps> = ({
         {comments.map((comment) => (
           <Card key={comment.id} size="small" className="mb-2">
             <div className="flex justify-between">
-              <Text strong>用户 {comment['user_id']}</Text>
+              <Button
+                type="link"
+                icon={<UserOutlined />}
+                onClick={() => showUserInfo(comment.user_id)}>
+                用户 {comment.user_id}
+              </Button>
               <Text type="secondary">
                 {new Date(comment.created_at).toLocaleString('zh-CN')}
               </Text>
@@ -175,6 +190,14 @@ const TravelogueList: React.FC<TravelogueListProps> = ({
       title: '作者',
       dataIndex: 'user_id',
       key: 'user_id',
+      render: (userId: string) => (
+        <Button
+          type="link"
+          icon={<UserOutlined />}
+          onClick={() => showUserInfo(userId)}>
+          {userId}
+        </Button>
+      ),
     },
     {
       title: '创建时间',
@@ -349,6 +372,12 @@ const TravelogueList: React.FC<TravelogueListProps> = ({
           </video>
         </div>
       </Modal>
+
+      <UserInfoModal
+        userId={selectedUserId}
+        visible={userInfoModalVisible}
+        onClose={() => setUserInfoModalVisible(false)}
+      />
     </>
   );
 };
