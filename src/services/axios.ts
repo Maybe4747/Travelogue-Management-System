@@ -12,7 +12,7 @@ const instance = axios.create({
 instance.interceptors.request.use(
   (config) => {
     // 从 localStorage 获取 token
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('access_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -34,7 +34,8 @@ instance.interceptors.response.use(
       switch (error.response.status) {
         case 401:
           // 未授权，清除用户信息并跳转到登录页
-          localStorage.removeItem('token');
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('user_id');
           window.location.href = '/login';
           break;
         case 403:

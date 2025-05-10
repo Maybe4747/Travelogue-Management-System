@@ -7,6 +7,15 @@ export const UserRole = {
 
 export type UserRoleType = (typeof UserRole)[keyof typeof UserRole];
 
+// 登录响应接口
+export interface LoginResponse {
+  token: string;
+  user_id: string;
+  role: UserRoleType;
+  message: string;
+  success: boolean;
+}
+
 // 用户信息接口
 export interface UserInfo {
   avatar: string;

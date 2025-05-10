@@ -1,66 +1,70 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { getUserInfo } from '../services/userService';
 import type { User } from '../types';
-import { loginApi } from '../services/api';
 
 interface AuthContextType {
   user: User | null;
-  login: (username: string, password: string) => Promise<boolean>;
+  loading: boolean;
+  login: (userId: string, token: string) => Promise<void>;
   logout: () => void;
-  isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 从本地存储中恢复用户会话
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (error) {
-        console.error('Failed to parse stored user data', error);
-      }
+    const token = localStorage.getItem('access_token');
+    const userId = localStorage.getItem('user_id');
+
+    if (token && userId) {
+      fetchUserInfo(userId);
+    } else {
+      setLoading(false);
     }
-    setIsLoading(false);
   }, []);
 
-  const login = async (nickname: string, password: string): Promise<boolean> => {
-    setIsLoading(true);
+  const fetchUserInfo = async (userId: string) => {
     try {
-      const user = await loginApi(nickname, password);
-      if (user) {
-        setUser(user);
-        localStorage.setItem('user', JSON.stringify(user));
-        return true;
-      }
-      return false;
+      const userData = await getUserInfo(userId);
+      setUser(userData);
+    } catch (error) {
+      console.error('获取用户信息失败:', error);
+      logout();
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
+  };
+
+  const login = async (userId: string, token: string) => {
+    localStorage.setItem('access_token', token);
+    localStorage.setItem('user_id', userId);
+
+    await fetchUserInfo(userId);
   };
 
   const logout = () => {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('user_id');
     setUser(null);
-    localStorage.removeItem('user');
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 };
