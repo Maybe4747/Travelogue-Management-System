@@ -1,12 +1,25 @@
 import '@ant-design/v5-patch-for-react-19';
 import React, { useState } from 'react';
-import { Table, Tag, Button, Space, Modal, Input, message } from 'antd';
+import {
+  Table,
+  Tag,
+  Button,
+  Space,
+  Modal,
+  Input,
+  message,
+  Image,
+  Card,
+  Typography,
+} from 'antd';
 import { TravelogueStatus } from '../../types';
-import type { Travelogue, TravelogueStatusType } from '../../types';
+import type { Travelogue, TravelogueStatusType, Comment } from '../../types';
 import {
   DeleteOutlined,
   CheckOutlined,
   CloseOutlined,
+  CommentOutlined,
+  PlayCircleOutlined,
 } from '@ant-design/icons';
 import { useAuth } from '../../context/AuthContext';
 import { UserRole } from '../../types';
@@ -17,6 +30,7 @@ import {
 } from '../../services/travelogueService';
 
 const { TextArea } = Input;
+const { Text } = Typography;
 
 interface TravelogueListProps {
   travelogues: Travelogue[];
@@ -34,6 +48,10 @@ const TravelogueList: React.FC<TravelogueListProps> = ({
     string | null
   >(null);
   const [loading, setLoading] = useState(false);
+  const [previewVisible, setPreviewVisible] = useState(false);
+  const [previewImages, setPreviewImages] = useState<string[]>([]);
+  const [videoModalVisible, setVideoModalVisible] = useState(false);
+  const [currentVideo, setCurrentVideo] = useState<string>('');
 
   const isAdmin = user?.role === UserRole.ADMIN;
 
@@ -101,6 +119,16 @@ const TravelogueList: React.FC<TravelogueListProps> = ({
     });
   };
 
+  const showImagePreview = (images: string[]) => {
+    setPreviewImages(images);
+    setPreviewVisible(true);
+  };
+
+  const showVideoPreview = (videoUrl: string) => {
+    setCurrentVideo(videoUrl);
+    setVideoModalVisible(true);
+  };
+
   const getStatusTag = (status: TravelogueStatusType) => {
     switch (status) {
       case TravelogueStatus.PENDING:
@@ -112,6 +140,28 @@ const TravelogueList: React.FC<TravelogueListProps> = ({
       default:
         return null;
     }
+  };
+
+  const renderComments = (comments: Comment[]) => {
+    if (!comments || comments.length === 0) {
+      return <Text type="secondary">暂无评论</Text>;
+    }
+
+    return (
+      <div className="space-y-2">
+        {comments.map((comment) => (
+          <Card key={comment.id} size="small" className="mb-2">
+            <div className="flex justify-between">
+              <Text strong>用户 {comment['user_id']}</Text>
+              <Text type="secondary">
+                {new Date(comment.created_at).toLocaleString('zh-CN')}
+              </Text>
+            </div>
+            <Text>{comment.content}</Text>
+          </Card>
+        ))}
+      </div>
+    );
   };
 
   const columns = [
@@ -186,7 +236,71 @@ const TravelogueList: React.FC<TravelogueListProps> = ({
         columns={columns}
         dataSource={travelogues}
         pagination={{ pageSize: 10 }}
+        expandable={{
+          expandedRowRender: (record) => (
+            <div className="p-4">
+              <div className="mb-4">
+                <Text strong>内容：</Text>
+                <Text className="whitespace-pre-line">{record.content}</Text>
+              </div>
+
+              {record.image && record.image.length > 0 && (
+                <div className="mb-4">
+                  <Text strong>图片：</Text>
+                  <div className="flex gap-2 mt-2">
+                    {record.image.slice(0, 3).map((image, index) => (
+                      <Image
+                        key={index}
+                        width={100}
+                        height={100}
+                        src={image}
+                        alt={`图片 ${index + 1}`}
+                        className="object-cover"
+                      />
+                    ))}
+                    {record.image.length > 3 && (
+                      <Button
+                        type="link"
+                        icon={<CommentOutlined />}
+                        onClick={() => showImagePreview(record.image)}>
+                        查看全部 ({record.image.length})
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {record.video && (
+                <div className="mb-4">
+                  <Text strong>视频：</Text>
+                  <div className="mt-2">
+                    <Button
+                      type="primary"
+                      icon={<PlayCircleOutlined />}
+                      onClick={() => showVideoPreview(record.video!)}>
+                      播放视频
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              <div className="mb-4">
+                <Text strong>评论：</Text>
+                {renderComments(record.comments)}
+              </div>
+
+              {record.status === TravelogueStatus.REJECTED &&
+                record.rejection_reason && (
+                  <div className="mt-4">
+                    <Tag color="red">拒绝原因</Tag>
+                    <p className="mt-1">{record.rejection_reason}</p>
+                  </div>
+                )}
+            </div>
+          ),
+        }}
       />
+
       <Modal
         title="拒绝原因"
         open={rejectModalVisible}
@@ -199,6 +313,41 @@ const TravelogueList: React.FC<TravelogueListProps> = ({
           onChange={(e) => setRejectionReason(e.target.value)}
           placeholder="请输入拒绝原因"
         />
+      </Modal>
+
+      <Modal
+        title="图片预览"
+        open={previewVisible}
+        footer={null}
+        onCancel={() => setPreviewVisible(false)}
+        width={800}>
+        <div className="grid grid-cols-3 gap-4">
+          {previewImages.map((image, index) => (
+            <Image
+              key={index}
+              src={image}
+              alt={`图片 ${index + 1}`}
+              className="w-full h-48 object-cover"
+            />
+          ))}
+        </div>
+      </Modal>
+
+      <Modal
+        title="视频播放"
+        open={videoModalVisible}
+        footer={null}
+        onCancel={() => setVideoModalVisible(false)}
+        width={800}>
+        <div className="aspect-video">
+          <video
+            controls
+            className="w-full h-full"
+            src={currentVideo}
+            controlsList="nodownload">
+            您的浏览器不支持视频播放
+          </video>
+        </div>
       </Modal>
     </>
   );

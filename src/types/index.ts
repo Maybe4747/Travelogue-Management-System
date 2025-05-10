@@ -15,6 +15,14 @@ export interface User {
   role: UserRoleType;
 }
 
+// 评论接口
+export interface Comment {
+  id: string;
+  user_id: string;
+  content: string;
+  created_at: string;
+}
+
 // 游记状态常量
 export const TravelogueStatus = {
   PENDING: 'pending', // 待审核
@@ -36,4 +44,7 @@ export interface Travelogue {
   status: TravelogueStatusType;
   rejection_reason?: string; // 拒绝原因，仅当状态为REJECTED时存在
   is_deleted: boolean; // 是否被逻辑删除
+  image: string[]; // 图片数组
+  video?: string; // 视频URL
+  comments: Comment[]; // 评论数组
 }
