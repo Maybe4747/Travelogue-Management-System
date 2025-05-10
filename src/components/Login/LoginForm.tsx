@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Form, Input, Button, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router';
@@ -11,13 +11,27 @@ interface LoginFormProps {
 
 const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
   const navigate = useNavigate();
-  const { login: authLogin } = useAuth();
+  const { login: authLogin, user } = useAuth();
   const [form] = Form.useForm();
+
+  // 检查是否已登录
+  useEffect(() => {
+    if (user) {
+      message.info('您已登录，请先退出登录');
+      navigate('/');
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (values: {
     nickname: string;
     password: string;
   }) => {
+    // 如果已经登录，不允许再次登录
+    if (user) {
+      message.warning('您已登录，请先退出登录');
+      return;
+    }
+
     try {
       const response = await login(values.nickname, values.password);
       if (response.success) {
