@@ -1,5 +1,6 @@
 import '@ant-design/v5-patch-for-react-19';
 import React, { useState, useEffect } from 'react';
+//  Radio（单选框）、Typography（排版组件）、Spin（加载中动画）
 import { Radio, Typography, Spin } from 'antd';
 import type { RadioChangeEvent } from 'antd';
 import { useLocation } from 'react-router';
@@ -8,7 +9,11 @@ import TravelogueList from '../../components/Travelogue/TravelogueList';
 import { getTravelogues } from '../../services/travelogueService';
 import type { Travelogue, TravelogueStatusType } from '../../types';
 import { TravelogueStatus } from '../../types';
-
+//  useLocation（获取当前路由信息）
+//  MainLayout（主布局组件）、TravelogueList（游记列表组件）
+//  getTravelogues（获取游记列表的服务函数）
+//  Travelogue（游记类型）、TravelogueStatusType（游记状态类型）
+//  TravelogueStatus（游记状态枚举）
 const { Title } = Typography;
 
 const MainView: React.FC = () => {
@@ -73,6 +78,9 @@ const MainView: React.FC = () => {
   };
 
   return (
+    // 使用 Radio.Group 组件创建状态筛选按钮组
+    // 可以筛选：全部、待审核、已通过、未通过
+    // 当状态改变时触发 handleStatusChange 函数
     <MainLayout>
       <div className="mb-6">
         <Title level={3}>{getPageTitle()}</Title>
@@ -97,6 +105,10 @@ const MainView: React.FC = () => {
           <Spin size="large" />
         </div>
       ) : (
+        // 使用 TravelogueList 组件显示游记列表
+        // 游记列表组件接收两个参数：
+        // 1. travelogues：游记列表数据
+        // 2. onStatusChange：状态改变时触发的事件处理函数
         <TravelogueList
           travelogues={travelogues}
           onStatusChange={fetchTravelogues}

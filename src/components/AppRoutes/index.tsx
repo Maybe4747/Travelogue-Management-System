@@ -25,7 +25,8 @@ export default function AppRoutes() {
       <Route path="/pending" element={<MainView />} />
       <Route path="/approved" element={<MainView />} />
       <Route path="/rejected" element={<MainView />} />
+      {/*防止用户访问不存在的页面，自动跳转到首页或指定页面。 */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
-};
+}

@@ -3,10 +3,10 @@ import { getUserInfo } from '../services/userService';
 import type { User } from '../types';
 
 interface AuthContextType {
-  user: User | null;
-  loading: boolean;
+  user: User | null; // 用户信息
+  loading: boolean;// 加载状态
   login: (userId: string, token: string) => Promise<void>;
-  logout: () => void;
+  logout: () => void;  // 登出方法
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);

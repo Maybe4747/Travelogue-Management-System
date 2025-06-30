@@ -85,6 +85,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
   return (
     <Layout className="min-h-screen" style={{ backgroundColor: '#f5f5f5' }}>
+      {/* Sider（侧边栏） */}
       <Sider
         trigger={null}
         collapsible
@@ -103,7 +104,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           className="border-r-0"
         />
       </Sider>
+      {/* Layout（主内容区域） */}
       <Layout style={{ backgroundColor: '#f5f5f5' }}>
+        {/* Header（头部） */}
         <Header
           className="bg-white p-0 flex justify-between items-center px-4"
           style={{ backgroundColor: '#fff' }}>
@@ -123,6 +126,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             </Dropdown>
           </div>
         </Header>
+        {/* Content（内容区域） */}
         <Content className="m-4 p-6 bg-white rounded">{children}</Content>
       </Layout>
     </Layout>
